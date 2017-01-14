@@ -6,10 +6,6 @@
 #include "imt4reader.h"
 #include "csvwriter.h"
 
-// OpenNN includes
-#include "../opennn/opennn.h"
-using namespace OpenNN;
-
 namespace Ui {
 class MainWindow;
 }
@@ -29,9 +25,6 @@ private slots:
 
     void readHistory(FileType type);
 
-    void on_runOpenNNButton_clicked();
-
-    Matrix<double> *getMatrixFromReader(IMt4Reader *reader);
     Forecast *getNewForecast(const History *hist, qint32 forcastTime);
 
 private:
