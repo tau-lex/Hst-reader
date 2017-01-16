@@ -12,18 +12,18 @@ TARGET = hst-reader
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-    mainwindow.cpp \
-    imt4reader.cpp \
-    hstreader.cpp \
-    csvreader.cpp \
-    csvwriter.cpp
+SOURCES += src/main.cpp\
+    src/mainwindow.cpp \
+    src/imt4reader.cpp \
+    src/hstreader.cpp \
+    src/csvreader.cpp \
+    src/csvwriter.cpp
 
-HEADERS  += mainwindow.h \
-    imt4reader.h \
-    hstreader.h \
-    csvreader.h \
-    csvwriter.h
+HEADERS  += include/mainwindow.h \
+    include/imt4reader.h \
+    include/hstreader.h \
+    include/csvreader.h \
+    include/csvwriter.h
 
 FORMS    += mainwindow.ui
 
