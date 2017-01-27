@@ -23,8 +23,7 @@ CsvWriter::~CsvWriter()
 {
     if( header )
         delete header;
-    if( forecastVector )
-    {
+    if( forecastVector ) {
         for( qint32 i = 0; i < forecastSize; i++ )
             delete (*forecastVector)[i];
         delete forecastVector;
@@ -69,56 +68,51 @@ std::vector<Forecast *> *CsvWriter::getForecastVector()
 void CsvWriter::writeFile()
 {
     QFile file(fileName, this);
-
-    if( file.open(QIODevice::WriteOnly) )
-    {
+    if( file.open(QIODevice::WriteOnly) ) {
         QTextStream output(&file);
         // Write header
-        QString headerStr = QString("%1;%2;%3;%4;%5;%6;%7;%8\n").arg( header->Version )
-                                                            .arg( header->Copyright )
-                                                            .arg( header->Symbol )
-                                                            .arg( header->Period )
-                                                            .arg( header->Digits )
-                                                            .arg( QDateTime::fromTime_t( header->TimeSign )
-                                                                    .toString("yyyy.MM.dd hh:mm:ss") )
-                                                            .arg( QDateTime::fromTime_t( header->LastSync )
-                                                                    .toString("yyyy.MM.dd hh:mm:ss") )
-                                                            .arg( header->Depth );
+        QString headerStr = QString("%1;%2;%3;%4;%5;%6;%7;%8\n")
+                .arg( header->Version )
+                .arg( header->Copyright )
+                .arg( header->Symbol )
+                .arg( header->Period )
+                .arg( header->Digits )
+                .arg( QDateTime::fromTime_t( header->TimeSign )
+                      .toString("yyyy.MM.dd hh:mm:ss") )
+                .arg( QDateTime::fromTime_t( header->LastSync )
+                      .toString("yyyy.MM.dd hh:mm:ss") )
+                .arg( header->Depth );
         output << headerStr;
         // Write prediction
         QString buffer;
-        for( qint32 i = 0; i < forecastSize; i++ )
-        {
-            {
-                buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time ).toString("yyyy.MM.dd hh:mm:ss");
-                for( qint32 j = 0; j < header->Depth; j++ )
-                {
-                    buffer += ';';
-                    buffer += QString::number( (*forecastVector)[i]->High[j], 'f', header->Digits );
-                }
-                buffer += '\n';
-                output << buffer;
+        for( qint32 i = 0; i < forecastSize; i++ ) {
+            buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time )
+                    .toString("yyyy.MM.dd hh:mm:ss");
+            for( qint32 j = 0; j < header->Depth; j++ ) {
+                buffer += ';';
+                buffer += QString::number( (*forecastVector)[i]->High[j],
+                                           'f', header->Digits );
             }
-            {
-                buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time ).toString("yyyy.MM.dd hh:mm:ss");
-                for( qint32 j = 0; j < header->Depth; j++ )
-                {
-                    buffer += ';';
-                    buffer += QString::number( (*forecastVector)[i]->Low[j], 'f', header->Digits );
-                }
-                buffer += '\n';
-                output << buffer;
+            buffer += '\n';
+            output << buffer;
+            buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time )
+                    .toString("yyyy.MM.dd hh:mm:ss");
+            for( qint32 j = 0; j < header->Depth; j++ ) {
+                buffer += ';';
+                buffer += QString::number( (*forecastVector)[i]->Low[j],
+                                           'f', header->Digits );
             }
-            {
-                buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time ).toString("yyyy.MM.dd hh:mm:ss");
-                for( qint32 j = 0; j < header->Depth; j++ )
-                {
-                    buffer += ';';
-                    buffer += QString::number( (*forecastVector)[i]->Close[j], 'f', header->Digits );
-                }
-                buffer += '\n';
-                output << buffer;
+            buffer += '\n';
+            output << buffer;
+            buffer = QDateTime::fromTime_t( (*forecastVector)[i]->Time )
+                    .toString("yyyy.MM.dd hh:mm:ss");
+            for( qint32 j = 0; j < header->Depth; j++ ) {
+                buffer += ';';
+                buffer += QString::number( (*forecastVector)[i]->Close[j],
+                                           'f', header->Digits );
             }
+            buffer += '\n';
+            output << buffer;
         }
         file.close();
     }

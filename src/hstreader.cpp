@@ -51,45 +51,42 @@ HstReader::HstReader(QString fName) : IMt4Reader(fName)
 
 bool HstReader::readFile()
 {
-    QFile file(fileName, this);
+    QFile file( fileName, this );
     if( file.open(QIODevice::ReadOnly) ) {
         fileExists = true;
-        QDataStream input(&file);
-        input.setByteOrder(QDataStream::LittleEndian);
+        QDataStream input( &file );
+        input.setByteOrder( QDataStream::LittleEndian );
         input.setFloatingPointPrecision( QDataStream::DoublePrecision );
         input >> *header;
-        quint32 i32; qint64 i64; double d;
         bool h401 = header->Version == 401;
+        quint32 i32; qint64 i64; double dbl;
         while( !file.atEnd() ) {
             std::vector<double> newRow;
-            if( h401 ) {
+            if( h401 ) {            // time
                 input >> i64;
                 newRow.push_back( static_cast<double>(i64) );
             } else {
                 input >> i32;
                 newRow.push_back( static_cast<double>(i32) );
             }
-            input >> d;
-            newRow.push_back( d );
-            input >> d;
-            newRow.push_back( d );
-            input >> d;
-            newRow.push_back( d );
-            input >> d;
-            newRow.push_back( d );
-            if( h401 ) {
+            input >> dbl;           // open
+            newRow.push_back( dbl );
+            input >> dbl;           // high
+            newRow.push_back( dbl );
+            input >> dbl;           // low
+            newRow.push_back( dbl );
+            input >> dbl;           // close
+            newRow.push_back( dbl );
+            if( h401 ) {            // volume
                 input >> i64;
                 newRow.push_back( static_cast<double>(i64) );
             } else {
-                input >> d;
-                newRow.push_back( d );
+                input >> dbl;
+                newRow.push_back( dbl );
             }
-            input.skipRawData(12);
-#ifndef __OPENNN_H__
+            if( h401 )                      // spread + realVolume
+                input.skipRawData( 12 );
             history->append( newRow );
-#else
-            history->append_row( newRow );
-#endif
         }
         file.close();
         return fileExists;

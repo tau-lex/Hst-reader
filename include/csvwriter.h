@@ -18,9 +18,9 @@ typedef struct HeaderWr
 typedef struct Forecast
 {
     qint32      Time;       // open time of first bar in forecast [0]
-    double      High[11];   // forecast highest price
-    double      Low[11];    // forecast lowest price
-    double      Close[11];  // forecast close price
+    double      High[11];
+    double      Low[11];
+    double      Close[11];
 } Forecast;
 
 //+----------------Class CsvWriter--------------------------------------------+
