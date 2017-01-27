@@ -19,15 +19,19 @@ public:
 
 private:
     Ui::MainWindow  *ui;
-    IMt4Reader      *historyReader = 0;
-    CsvWriter       *forecastWriter = 0;
+    IMt4Reader      *historyReader;
+    CsvWriter       *csvWriter;
     QString         filePath = "C:/";
 
 private slots:
     void on_findFileButton_clicked();
-    void on_saveCsvButton_clicked();
-    void on_action_triggered();
-    void on_readButton_clicked();
+    void readFile();
+    void saveCsvFile();
+    void savePredictionExample();
+    void on_actionClearText_triggered();
+
+private:
+    void setConnections(void);
 };
 
 #endif // MAINWINDOW_H

@@ -48,50 +48,7 @@
       <item>
        <widget class="QToolButton" name="findFileButton">
         <property name="text">
-         <string>Открыть файл</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="leftMargin">
-       <number>3</number>
-      </property>
-      <property name="topMargin">
-       <number>3</number>
-      </property>
-      <property name="rightMargin">
-       <number>3</number>
-      </property>
-      <property name="bottomMargin">
-       <number>3</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="readButton">
-        <property name="text">
-         <string>Прочитать</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="saveCsvButton">
-        <property name="text">
-         <string>Сохранить в Csv</string>
+         <string>. . .</string>
         </property>
        </widget>
       </item>
@@ -120,10 +77,21 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Текст</string>
+     <string>Text</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="actionClearText"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionRead_File"/>
+    <addaction name="actionSaveCsv"/>
+    <addaction name="actionSave_Example"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menu_2"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -133,11 +101,54 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSaveCsv"/>
+   <addaction name="actionSave_Example"/>
+   <addaction name="actionRead_File"/>
+   <addaction name="separator"/>
+   <addaction name="actionClearText"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="action">
+  <action name="actionClearText">
    <property name="text">
-    <string>Очистить</string>
+    <string>Clear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear text</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open history file</string>
+   </property>
+  </action>
+  <action name="actionSaveCsv">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save in to csv file format</string>
+   </property>
+  </action>
+  <action name="actionSave_Example">
+   <property name="text">
+    <string>Save Example</string>
+   </property>
+   <property name="toolTip">
+    <string>Save example a prediction file</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionRead_File">
+   <property name="text">
+    <string>Read File</string>
    </property>
   </action>
  </widget>
