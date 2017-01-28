@@ -64,8 +64,11 @@ void MainWindow::readFile()
         return;
     historyReader->readFile();
     ui->textBrowser->insertPlainText( historyReader->getHeaderString() + "\n" );
-    for( size_t i = 0; i < historyReader->getHistorySize(); i++ )
+    for( size_t i = 0; i < historyReader->getHistorySize(); i++ ) {
         ui->textBrowser->insertPlainText( historyReader->getHistoryString( i ) + "\n" );
+        QScrollBar *v = ui->textBrowser->verticalScrollBar();
+        v->setValue( v->maximum() );
+    }
     ui->textBrowser->insertPlainText( QString( "MW: File readed. History size - %1\n\n" )
                                       .arg( historyReader->getHistorySize() ) );
     QScrollBar *v = ui->textBrowser->verticalScrollBar();
