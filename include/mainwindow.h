@@ -29,6 +29,7 @@ private slots:
     void saveCsvFile();
     void savePredictionExample();
     void on_actionClearText_triggered();
+    void about();
 
 private:
     void setConnections(void);

@@ -1,6 +1,8 @@
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QApplication>
+#include <QMessageBox>
+#include <QScrollBar>
 #include <QFileDialog>
 #include <QLineEdit>
 #include "include/hstreader.h"
@@ -66,6 +68,8 @@ void MainWindow::readFile()
         ui->textBrowser->insertPlainText( historyReader->getHistoryString( i ) + "\n" );
     ui->textBrowser->insertPlainText( QString( "MW: File readed. History size - %1\n\n" )
                                       .arg( historyReader->getHistorySize() ) );
+    QScrollBar *v = ui->textBrowser->verticalScrollBar();
+    v->setValue( v->maximum() );
 }
 
 void MainWindow::saveCsvFile()
@@ -88,7 +92,9 @@ void MainWindow::saveCsvFile()
         csvWriter->getDataPtr()->append( historyReader->getHistory()->at(idx) );
     }
     csvWriter->writeFile();
-    ui->textBrowser->insertPlainText( tr("Saved csv file - %1.\n").arg( outFile ) );
+    ui->textBrowser->insertPlainText( tr("Saved .csv file - %1.\n").arg( outFile ) );
+    QScrollBar *v = ui->textBrowser->verticalScrollBar();
+    v->setValue( v->maximum() );
 }
 
 void MainWindow::savePredictionExample()
@@ -123,12 +129,26 @@ void MainWindow::savePredictionExample()
         forecast->append( newPLine );
     }
     csvPWriter.writeFile();
-    ui->textBrowser->insertPlainText( tr("Saved csv file - %1.\n").arg( outFile ) );
+    ui->textBrowser->insertPlainText( tr("Saved .csv file (example prediction) - %1.\n").arg( outFile ) );
+    QScrollBar *v = ui->textBrowser->verticalScrollBar();
+    v->setValue( v->maximum() );
 }
 
 void MainWindow::on_actionClearText_triggered()
 {
     ui->textBrowser->clear();
+}
+
+void MainWindow::about()
+{
+
+    QMessageBox::about(this, tr("About Hst-Reader"),
+             tr("The <b>Hst-Reader</b> converts .hst files in standard .сsv file.<br/>"
+                ".hst files - timeseries data storage, a series of programs Meta Trader. <br/><br/>"
+                "Version - %1.<br/>Author - %2.<br/><a href=\"%3\">%3</a>")
+                       .arg( qApp->applicationVersion() )
+                       .arg( qApp->organizationName() )
+                       .arg( qApp->organizationDomain() ) );
 }
 
 void MainWindow::setConnections(void)
@@ -143,4 +163,8 @@ void MainWindow::setConnections(void)
              this, SLOT( savePredictionExample() ) );
     connect( ui->actionExit, SIGNAL( triggered(bool) ),
              this, SLOT( close() ) );
+    connect( ui->actionAbout, SIGNAL( triggered(bool) ),
+             this, SLOT( about() ) );
+    connect( ui->actionAbout_Qt, SIGNAL( triggered(bool) ),
+             qApp, SLOT( aboutQt() ) );
 }
