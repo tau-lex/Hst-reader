@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://www.mql5.com/ru/users/terentjew23                               */
+/*                                                                           */
+/*   M A I N W I N D O W   C L A S S   H E A D E R                           */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -25,9 +37,11 @@ private:
 
 private slots:
     void on_findFileButton_clicked();
+    void on_findPathButton_clicked();
     void readFile();
     void saveCsvFile();
     void savePredictionExample();
+    void saveXYFiles();
     void on_actionClearText_triggered();
     void about();
 

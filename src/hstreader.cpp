@@ -18,7 +18,7 @@ QDataStream& operator>>(QDataStream &out, Header &header)
     out >> header.Digits;
     out >> header.TimeSign;
     out >> header.LastSync;
-    out.skipRawData(13 * 4);        // HeaderBytes.Unused
+    out.skipRawData( 13 * 4 );      // HeaderBytes.Unused
     return out;
 }
 QDataStream& operator>>(QDataStream &out, History &history)
@@ -29,9 +29,9 @@ QDataStream& operator>>(QDataStream &out, History &history)
     out >> history.Low;
     out >> history.Close;
     out >> history.Volume;
+    out.skipRawData(12);
     //out >> history.Spread;
     //out >> history.RealVolume;
-    out.skipRawData(12);
     return out;
 }
 QDataStream& operator>>(QDataStream &out, History400 &history)

@@ -46,9 +46,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="findFileButton">
+       <widget class="QPushButton" name="findFileButton">
         <property name="text">
-         <string>. . .</string>
+         <string>File ...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="findPathButton">
+        <property name="text">
+         <string>Path ...</string>
         </property>
        </widget>
       </item>
@@ -110,17 +117,20 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionOpenFolder"/>
+   <addaction name="separator"/>
    <addaction name="actionRead_File"/>
    <addaction name="separator"/>
    <addaction name="actionSaveCsv"/>
    <addaction name="actionSave_Example"/>
+   <addaction name="actionPrepare_XY_Data"/>
    <addaction name="separator"/>
    <addaction name="actionClearText"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionClearText">
    <property name="text">
-    <string>Clear</string>
+    <string>Clear Text</string>
    </property>
    <property name="toolTip">
     <string>Clear text</string>
@@ -128,7 +138,7 @@
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open...</string>
+    <string>Open File</string>
    </property>
    <property name="toolTip">
     <string>Open history file</string>
@@ -144,7 +154,7 @@
   </action>
   <action name="actionSave_Example">
    <property name="text">
-    <string>Save Example</string>
+    <string>Forecast Example</string>
    </property>
    <property name="toolTip">
     <string>Save example a prediction file</string>
@@ -174,6 +184,16 @@
    </property>
    <property name="toolTip">
     <string>About Hst-Reader</string>
+   </property>
+  </action>
+  <action name="actionPrepare_XY_Data">
+   <property name="text">
+    <string>Prepare XY Data</string>
+   </property>
+  </action>
+  <action name="actionOpenFolder">
+   <property name="text">
+    <string>Open Folder</string>
    </property>
   </action>
  </widget>
