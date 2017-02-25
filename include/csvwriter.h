@@ -15,7 +15,7 @@ protected:
     QString                     fileName;
 private:
     QList<std::vector<double> > *data;
-    bool                        zeroColumnIsTime;
+    bool                        zeroColumnIsTime = false;
     qint32                      precision = 4;
 
 public:

@@ -47,6 +47,12 @@ private slots:
 
 private:
     void setConnections(void);
+    void getMinPeriod(const QMap<QString, IMt4Reader *> &readers,
+                      qint32 &period);
+    void getEntryTime(const QMap<QString, IMt4Reader *> &readers,
+                      qint64 &first, qint64 &last);
+    double getDoubleTimeSymbol(const QString &symbol,
+                               const qint64 &timeCurrentIter);
 };
 
 #endif // MAINWINDOW_H

@@ -96,6 +96,7 @@
     <addaction name="actionRead_File"/>
     <addaction name="actionSaveCsv"/>
     <addaction name="actionSave_Example"/>
+    <addaction name="actionPrepare_XY_Data"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">

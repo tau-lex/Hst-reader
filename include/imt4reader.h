@@ -61,7 +61,7 @@ protected:
 public:
     void setFileName(const QString fName);
     QString getFileName() const;
-    size_t getHistorySize() const;
+    qint32 getHistorySize() const;
     qint32 getHistoryVersion() const;
 
     virtual bool readFile() = 0;

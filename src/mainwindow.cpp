@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include <QFileDialog>
 #include <QLineEdit>
+#include <QDateTime>
 #include "include/hstreader.h"
 #include "include/csvreader.h"
 #include "include/csvpredictionwriter.h"
@@ -106,7 +107,7 @@ void MainWindow::readFile()
     }
     historyReader->readFile();
     ui->textBrowser->insertPlainText( historyReader->getHeaderString() + "\n" );
-    for( size_t i = 0; i < historyReader->getHistorySize(); i++ ) {
+    for( qint32 i = 0; i < historyReader->getHistorySize(); i++ ) {
         ui->textBrowser->insertPlainText( historyReader->getHistoryString( i ) + "\n" );
         QScrollBar *v = ui->textBrowser->verticalScrollBar();
         v->setValue( v->maximum() );
@@ -133,7 +134,7 @@ void MainWindow::saveCsvFile()
     csvWriter = new CsvWriter( outFile );
 	csvWriter->setZeroColumnIsTime( true );
     csvWriter->setPrecision( historyReader->getHeader()->Digits );
-    for( size_t idx = 0; idx < historyReader->getHistorySize(); idx++ ) {
+    for( qint32 idx = 0; idx < historyReader->getHistorySize(); idx++ ) {
         csvWriter->getDataPtr()->append( historyReader->getHistory()->at(idx) );
     }
     csvWriter->writeFile();
@@ -162,7 +163,7 @@ void MainWindow::savePredictionExample()
     header->LastSync = historyReader->getHeader()->LastSync;
     header->Depth  = 5;
     QList<Forecast *> *forecast = csvPWriter.getDataPredictionPtr();
-    for( size_t idx = 0; idx < historyReader->getHistorySize() - 5; idx++ )
+    for( qint32 idx = 0; idx < historyReader->getHistorySize() - 5; idx++ )
     {
         Forecast *newPLine = new Forecast;
         newPLine->Time = (qint64)historyReader->getHistory(idx)[0];
@@ -193,45 +194,120 @@ void MainWindow::saveXYFiles()
         ui->textBrowser->insertPlainText( "Please, select a history directory.\n" );
         return;
     }
-//    ui->textBrowser->insertPlainText( QString("%1\n").arg( files[0] ) );
+//  R E A D E R S
+    QMap<QString, qint32> iters;
     QMap<QString, IMt4Reader* > readers;
-    foreach( QString file, files ) {
-        if( file.contains(".hst") ) {
-            readers[file] = new HstReader( QString("%1/%2").arg( filePath ).arg( file ) );
-        } else {
-            readers[file] = new CsvReader( QString("%1/%2").arg( filePath ).arg( file ) );
-        }
-        if( readers[file]->readFile() ) {
-            ui->textBrowser->insertPlainText( tr("History file \"%1\" succeful loaded.")
-                                              .arg( file ) );
-        } else {
-            ui->textBrowser->insertPlainText( tr("History file \"%1\" cannot be loaded.")
-                                              .arg( file ) );
-            goto End;
-        }
-    }
     CsvWriter* fileX;
-    fileX = new CsvWriter( QString("%1/input_data_x.csv").arg( filePath ) );
+    CsvWriter* fileY;
     QMap<QString, CsvWriter* > writers;
-    foreach( QString file, files ) {
-        QString name = file.left( file.length() - 4 );
-        writers[file] = new CsvWriter( QString("%1/%2_y.csv").arg( filePath ).arg( name ) );
+    try {
+        foreach( QString file, files ) {
+            iters[file] = 0;
+            if( file.contains(".hst") ) {
+                readers[file] = new HstReader( QString("%1/%2").arg( filePath ).arg( file ) );
+            } else {
+                readers[file] = new CsvReader( QString("%1/%2").arg( filePath ).arg( file ) );
+            }
+            if( readers[file]->readFile() ) {
+                ui->textBrowser->insertPlainText( tr("History file \"%1\" succeful loaded.")
+                                                  .arg( file ) );
+            } else {
+                ui->textBrowser->insertPlainText( tr("History file \"%1\" cannot be loaded.")
+                                                  .arg( file ) );
+                throw 11;
+            }
+        }
+//  W R I T E R S
+        fileX = new CsvWriter( QString("%1/input_data_x.csv").arg( filePath ) );
+        fileY = new CsvWriter( QString("%1/output_data_y.csv").arg( filePath ) );
+        foreach( QString file, files ) {
+            QString name = file.left( file.length() - 4 );
+            writers[file] = new CsvWriter( QString("%1/%2_y.csv").arg( filePath ).arg( name ) );
+        }
+//  L O A D   D A T A   A N D   P R E P A R E   W R I T E R S
+        /// from neuralnetworkanalysis.cpp
+        qint32 iterPeriod;
+        getMinPeriod( readers, iterPeriod );
+        qint64 firstEntryTime, lastEntryTime;
+        getEntryTime( readers, firstEntryTime, lastEntryTime );
+        bool lastBarInTS = false;
+        bool readVolume = false;
+        qint32 idxRow, idxSymb;
+        qint64 iterTime = firstEntryTime;
+        qint64 iterEnd = lastEntryTime;// - iterPeriod;
+        // D O
+        for( idxRow = 0; iterTime < iterEnd; iterTime += iterPeriod ) {
+            if( QDateTime::fromTime_t( iterTime ).date().dayOfWeek() == 6 ||
+                    QDateTime::fromTime_t( iterTime ).date().dayOfWeek() == 7 )
+                continue;
+            // N E W   L I N E   X
+            std::vector<double> newRow;
+            newRow.push_back( getDoubleTimeSymbol( "HOUR", iterTime ) );
+            newRow.push_back( getDoubleTimeSymbol( "MINUTE", iterTime ) );
+            newRow.push_back( getDoubleTimeSymbol( "WEEKDAY", iterTime ) );
+            newRow.push_back( getDoubleTimeSymbol( "DAY", iterTime ) );
+            newRow.push_back( getDoubleTimeSymbol( "MONTH", iterTime ) );
+            newRow.push_back( getDoubleTimeSymbol( "YEAR", iterTime ) );
+            foreach( QString file, files ) {
+                idxSymb = iters[file] >= 0 ? iters[file] : 0;
+                newRow.push_back( (*readers[file]->getHistory())[idxSymb][1] );
+                newRow.push_back( (*readers[file]->getHistory())[idxSymb][2] );
+                newRow.push_back( (*readers[file]->getHistory())[idxSymb][3] );
+                newRow.push_back( (*readers[file]->getHistory())[idxSymb][4] );
+                if( readVolume )
+                    newRow.push_back( (*readers[file]->getHistory())[idxSymb][5] );
+                if( (*readers[file]->getHistory())[iters[file]][0] <= iterTime )
+                    iters[file]++;
+                if( readers[file]->getHistorySize() == iters[file] )
+                    lastBarInTS = true;
+            }
+            fileX->getDataPtr()->append( newRow );
+            // N E W   L I N E   Y
+            std::vector<double> newRowY;
+            newRowY.push_back( getDoubleTimeSymbol( "HOUR", iterTime ) );
+            newRowY.push_back( getDoubleTimeSymbol( "MINUTE", iterTime ) );
+            newRowY.push_back( getDoubleTimeSymbol( "WEEKDAY", iterTime ) );
+            newRowY.push_back( getDoubleTimeSymbol( "DAY", iterTime ) );
+            newRowY.push_back( getDoubleTimeSymbol( "MONTH", iterTime ) );
+            newRowY.push_back( getDoubleTimeSymbol( "YEAR", iterTime ) );
+            foreach( QString file, files ) {
+                idxSymb = iters[file] >= 0 ? iters[file]+1 : 1;
+                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][1] );
+                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][2] );
+                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][3] );
+                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][4] );
+                if( iters[file] > (readers[file]->getHistorySize() - 1) )
+                    lastBarInTS = true;
+            }
+            fileY->getDataPtr()->append( newRowY );
+            // N E W   L I N E   T O   Y - F I L E S
+
+            // E N D   I T E R
+            idxRow += 1;
+            if( lastBarInTS )
+                break;
+        }
+//  W R I T E   A L L   F I L E S
+        fileX->writeFile();
+        ui->textBrowser->insertPlainText( tr("File input_data_x.csv saved.\n") );
+        fileY->writeFile();
+        ui->textBrowser->insertPlainText( tr("File output_data_y.csv saved.\n") );
+        foreach( QString file, files ) {
+            writers[file]->writeFile();
+            ui->textBrowser->insertPlainText( tr("File %1_y.csv saved.\n").arg( file ) );
+        }
+    } catch( qint32 e ) {
+        ui->textBrowser->insertPlainText( tr("Stop process. Error %1\n").arg(e) );
     }
-//    ui->textBrowser->insertPlainText( QString("%1\n").arg( name ) );
-    // from neuralnetworkanalysis.cpp
-
-
-
-
-
-
-End:// free memory
+//  F R E E   M E M O R Y
     foreach( QString file, files ) {
         if( readers[file] )
             delete readers[file];
     }
     if( fileX )
         delete fileX;
+    if( fileY )
+        delete fileY;
     foreach( QString file, files ) {
         if( writers[file] )
             delete writers[file];
@@ -274,4 +350,54 @@ void MainWindow::setConnections(void)
              this, SLOT( about() ) );
     connect( ui->actionAbout_Qt, SIGNAL( triggered(bool) ),
              qApp, SLOT( aboutQt() ) );
+}
+
+void MainWindow::getMinPeriod(const QMap<QString, IMt4Reader *> &readers, qint32 &period)
+{
+    period = 43200;
+    QMapIterator<QString, IMt4Reader *> i(readers);
+    while( i.hasNext() ) {
+        i.next();
+        if( i.value()->getHeader()->Period < period ) {
+            period = i.value()->getHeader()->Period;
+        }
+    }
+}
+
+void MainWindow::getEntryTime(const QMap<QString, IMt4Reader *> &readers,
+                                              qint64 &first, qint64 &last)
+{
+    first = std::numeric_limits<qint64>::max();
+    last = 0;
+    QMapIterator<QString, IMt4Reader *> i(readers);
+    while( i.hasNext() ) {
+        i.next();
+        if( i.value()->getHistorySize() > 0 ) {
+            if( (*i.value()->getHistory())[0][0] < first )
+                first = (*i.value()->getHistory())[0][0];
+            if( (*i.value()->getHistory())[i.value()->getHistorySize()-1][0] > last )
+                last = (*i.value()->getHistory())[i.value()->getHistorySize()-1][0];
+        }
+    }
+}
+
+double MainWindow::getDoubleTimeSymbol(const QString &symbol,
+                                                  const qint64 &timeCurrentIter)
+{
+    if( symbol == "YEAR" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).date().year());
+    else if( symbol == "MONTH" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).date().month());
+    else if( symbol == "DAY" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).date().day());
+    else if( symbol == "YEARDAY" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).date().dayOfYear());
+    else if( symbol == "HOUR" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).time().hour());
+    else if( symbol == "MINUTE" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).time().minute());
+    else if( symbol == "WEEKDAY" )
+        return static_cast<double>(QDateTime::fromTime_t( timeCurrentIter ).date().dayOfWeek());
+    else throw 25;                      // !err not timeSymbol
+    return -1.0;
 }
