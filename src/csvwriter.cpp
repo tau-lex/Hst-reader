@@ -76,12 +76,11 @@ void CsvWriter::writeFile(void)
                 buffer = QDateTime::fromTime_t( static_cast<qint32>((*data)[idx][0]) )
                          .toString("yyyy.MM.dd hh:mm:ss");
             else
-                buffer = QString("%1").arg( static_cast<qint32>((*data)[idx][0]) );
-            buffer += QString(",%1").arg( (*data)[idx][1], 0, 'f', precision );
-            buffer += QString(",%1").arg( (*data)[idx][2], 0, 'f', precision );
-            buffer += QString(",%1").arg( (*data)[idx][3], 0, 'f', precision );
-            buffer += QString(",%1").arg( (*data)[idx][4], 0, 'f', precision );
-            buffer += QString(",%1\n").arg( static_cast<qint32>((*data)[idx][5]) );
+                buffer = QString("%1").arg( (*data)[idx][0] );
+            for( qint32 idxR = 1; idxR < (*data)[idx].size(); idxR++ ) {
+                buffer += QString(",%1").arg( (*data)[idx][idxR], 0, 'f', precision );
+            }
+            buffer += "\n";
             output << buffer;
         }
         file.close();
