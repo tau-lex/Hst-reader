@@ -1,3 +1,6 @@
 build-hst-reader-MinGW_32bit-Release/
 build-hst-reader-MinGW_32bit-Debug/
 bin/hstReader/
+bin/Hst-Reader_msvc2015_64/
+bin/Hst-Reader_msvc2015_32/
+bin/Hst-Reader_gcc_32/
