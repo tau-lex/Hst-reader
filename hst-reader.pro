@@ -14,9 +14,9 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = hst-reader
+TARGET   = hst-reader
 TEMPLATE = app
-
+RC_FILE  = hst-reader.rc
 
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
