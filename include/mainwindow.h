@@ -28,6 +28,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setFilePath(const QString fPath);
+    void print(const QString text);//debug
 
 private:
     Ui::MainWindow  *ui;
@@ -47,6 +49,7 @@ private slots:
 
 private:
     void setConnections(void);
+    bool checkFilePath(const QString fPath);
     void getMinPeriod(const QMap<QString, IMt4Reader *> &readers,
                       qint32 &period);
     void getEntryTime(const QMap<QString, IMt4Reader *> &readers,

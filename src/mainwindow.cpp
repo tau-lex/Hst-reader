@@ -41,6 +41,39 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setFilePath(const QString fPath)
+{
+    if( fPath.size() <= 0 )
+        return;
+    if( historyReader ) {
+        delete historyReader;
+        historyReader = 0;
+    }
+    filePath = fPath;
+    ui->filePathEdit->setText( filePath );
+    QPalette pal = ui->filePathEdit->palette();
+    if( checkFilePath(filePath) ) {
+        pal.setColor( QPalette::Text, Qt::darkGreen );
+        print( filePath );
+        if( filePath.contains(".hst") )
+            historyReader = new HstReader( filePath );
+        else if( filePath.contains(".csv") )
+            historyReader = new CsvReader( filePath );
+    } else {
+        pal.setColor( QPalette::Text, Qt::darkRed );
+    }
+    ui->filePathEdit->setPalette( pal );
+    if( true )
+        readFile();
+}
+
+void MainWindow::print(const QString text)
+{
+    ui->textBrowser->insertPlainText( QString("%1\n").arg( text ) );
+    QScrollBar *v = ui->textBrowser->verticalScrollBar();
+    v->setValue( v->maximum() );
+}
+
 void MainWindow::on_findFileButton_clicked()
 {
     filePath = QFileDialog::getOpenFileName( this, tr("Open history file"),
@@ -48,25 +81,21 @@ void MainWindow::on_findFileButton_clicked()
                                              tr("Timeseries (*.hst *.csv);;\
                                              History (*.hst);;\
                                              Csv files (*.csv)") );
+    if( historyReader ) {
+        delete historyReader;
+        historyReader = 0;
+    }
     ui->filePathEdit->setText( filePath );
     QPalette pal = ui->filePathEdit->palette();
-    if( filePath.contains(".hst") || filePath.contains(".csv") ) {
+    if( checkFilePath(filePath) ) {
         pal.setColor( QPalette::Text, Qt::darkGreen );
-        ui->textBrowser->insertPlainText( filePath + "\n" );
-        if( historyReader ) {
-            delete historyReader;
-            historyReader = 0;
-        }
+        print( filePath );
         if( filePath.contains(".hst") )
             historyReader = new HstReader( filePath );
         else if( filePath.contains(".csv") )
             historyReader = new CsvReader( filePath );
     } else {
         pal.setColor( QPalette::Text, Qt::darkRed );
-        if( historyReader ) {
-            delete historyReader;
-            historyReader = 0;
-        }
     }
     ui->filePathEdit->setPalette( pal );
 }
@@ -76,25 +105,17 @@ void MainWindow::on_findPathButton_clicked()
     filePath = QFileDialog::getExistingDirectory( this,
                                                   tr("Open history directory"),
                                                   filePath );
+    if( historyReader ) {
+        delete historyReader;
+        historyReader = 0;
+    }
     ui->filePathEdit->setText( filePath );
-    QDir path( filePath );
-    QStringList nameFilter;
-    nameFilter << "*.hst" << "*.csv";
-    QStringList files = path.entryList( nameFilter, QDir::Files );
     QPalette pal = ui->filePathEdit->palette();
-    if( files.size() > 0 ) {
+    if( checkFilePath(filePath) ) {
         pal.setColor( QPalette::Text, Qt::darkGreen );
-        ui->textBrowser->insertPlainText( filePath + "\n" );
-        if( historyReader ) {
-            delete historyReader;
-            historyReader = 0;
-        }
+        print( filePath );
     } else {
         pal.setColor( QPalette::Text, Qt::darkRed );
-        if( historyReader ) {
-            delete historyReader;
-            historyReader = 0;
-        }
     }
     ui->filePathEdit->setPalette( pal );
 }
@@ -102,26 +123,22 @@ void MainWindow::on_findPathButton_clicked()
 void MainWindow::readFile()
 {
     if( !historyReader ) {
-        ui->textBrowser->insertPlainText( "Please, select a file.\n" );
+        print( "Please, select a file." );
         return;
     }
     historyReader->readFile();
-    ui->textBrowser->insertPlainText( historyReader->getHeaderString() + "\n" );
+    ui->textBrowser->insertPlainText( historyReader->getHeaderString() );
     for( qint32 i = 0; i < historyReader->getHistorySize(); i++ ) {
-        ui->textBrowser->insertPlainText( historyReader->getHistoryString( i ) + "\n" );
-        QScrollBar *v = ui->textBrowser->verticalScrollBar();
-        v->setValue( v->maximum() );
+        print( historyReader->getHistoryString(i) );
     }
-    ui->textBrowser->insertPlainText( QString( "MW: File readed. History size - %1\n\n" )
-                                      .arg( historyReader->getHistorySize() ) );
-    QScrollBar *v = ui->textBrowser->verticalScrollBar();
-    v->setValue( v->maximum() );
+    print( QString( "File readed. History size - %1" )
+           .arg( historyReader->getHistorySize() ) );
 }
 
 void MainWindow::saveCsvFile()
 {
     if( !historyReader ) {
-        ui->textBrowser->insertPlainText( "Please, select a file.\n" );
+        print( "Please, select a file." );
         return;
     }
     if( historyReader->getHistorySize() <= 0 )
@@ -138,15 +155,13 @@ void MainWindow::saveCsvFile()
         csvWriter->getDataPtr()->append( historyReader->getHistory()->at(idx) );
     }
     csvWriter->writeFile();
-    ui->textBrowser->insertPlainText( tr("Saved .csv file - %1.\n").arg( outFile ) );
-    QScrollBar *v = ui->textBrowser->verticalScrollBar();
-    v->setValue( v->maximum() );
+    print( tr("Saved .csv file - %1.").arg( outFile ) );
 }
 
 void MainWindow::savePredictionExample()
 {
     if( !historyReader ) {
-        ui->textBrowser->insertPlainText( "Please, select a file.\n" );
+        print( "Please, select a file." );
         return;
     }
     if( historyReader->getHistorySize() <= 0 )
@@ -175,9 +190,7 @@ void MainWindow::savePredictionExample()
         forecast->append( newPLine );
     }
     csvPWriter.writeFile();
-    ui->textBrowser->insertPlainText( tr("Saved .csv file (example prediction) - %1.\n").arg( outFile ) );
-    QScrollBar *v = ui->textBrowser->verticalScrollBar();
-    v->setValue( v->maximum() );
+    print( tr("Saved .csv file (example prediction) - %1.").arg( outFile ) );
 }
 
 void MainWindow::saveXYFiles()
@@ -189,40 +202,51 @@ void MainWindow::saveXYFiles()
     QDir path( filePath );
     QStringList nameFilter;
     nameFilter << "*.hst" << "*.csv";
-    QStringList files = path.entryList( nameFilter, QDir::Files );
+    QStringList files = path.entryList( nameFilter, QDir::Files, QDir::Name );
     if( files.size() <= 0 ) {
-        ui->textBrowser->insertPlainText( "Please, select a history directory.\n" );
+        print( "Please, select a history directory." );
         return;
     }
+    path.mkdir("result");
 //  R E A D E R S
+    bool readVolume = false;
     QMap<QString, qint32> iters;
     QMap<QString, IMt4Reader* > readers;
     CsvWriter* fileX;
     CsvWriter* fileY;
     QMap<QString, CsvWriter* > writers;
+    std::vector<qint32> precisionVecX;
     try {
+        for( qint32 idxT = 0; idxT < 6; idxT++ ) // Precision for time data
+            precisionVecX.push_back( 0 );
         foreach( QString file, files ) {
-            iters[file] = 0;
+            iters[file] = -1;
             if( file.contains(".hst") ) {
                 readers[file] = new HstReader( QString("%1/%2").arg( filePath ).arg( file ) );
             } else {
                 readers[file] = new CsvReader( QString("%1/%2").arg( filePath ).arg( file ) );
             }
             if( readers[file]->readFile() ) {
-                ui->textBrowser->insertPlainText( tr("History file \"%1\" succeful loaded.")
-                                                  .arg( file ) );
+                print( tr("History file \"%1\" succeful loaded.").arg( file ) );
             } else {
-                ui->textBrowser->insertPlainText( tr("History file \"%1\" cannot be loaded.")
-                                                  .arg( file ) );
+                print( tr("History file \"%1\" cannot be loaded.").arg( file ) );
                 throw 11;
             }
+            for( qint32 idxD = 0; idxD < 4; idxD++ ) // Precision for TS data
+                precisionVecX.push_back( readers[file]->getHeader()->Digits );
+            if( readVolume )
+                precisionVecX.push_back( readers[file]->getHeader()->Digits );
         }
+        print( tr("Succeful loaded %1 files.").arg( readers.size() ) );
 //  W R I T E R S
-        fileX = new CsvWriter( QString("%1/input_data_x.csv").arg( filePath ) );
-        fileY = new CsvWriter( QString("%1/output_data_y.csv").arg( filePath ) );
+        fileX = new CsvWriter( QString("%1/result/input_data_x.csv").arg( filePath ) );
+        fileX->setPrecision( precisionVecX );
+        fileY = new CsvWriter( QString("%1/result/output_data_y.csv").arg( filePath ) );
+        fileY->setPrecision( precisionVecX );
         foreach( QString file, files ) {
             QString name = file.left( file.length() - 4 );
-            writers[file] = new CsvWriter( QString("%1/%2_y.csv").arg( filePath ).arg( name ) );
+            writers[file] = new CsvWriter( QString("%1/result/%2_y.csv").arg( filePath ).arg( name ) );
+            writers[file]->setPrecision( readers[file]->getHeader()->Digits );
         }
 //  L O A D   D A T A   A N D   P R E P A R E   W R I T E R S
         /// from neuralnetworkanalysis.cpp
@@ -230,9 +254,11 @@ void MainWindow::saveXYFiles()
         getMinPeriod( readers, iterPeriod );
         qint64 firstEntryTime, lastEntryTime;
         getEntryTime( readers, firstEntryTime, lastEntryTime );
+        print( tr("The data set belongs to the interval of time:\n * %1 - %2.")
+               .arg( QDateTime::fromTime_t( firstEntryTime ).toString("yyyy.MM.dd hh:mm:ss") )
+               .arg( QDateTime::fromTime_t( lastEntryTime ).toString("yyyy.MM.dd hh:mm:ss") ) );
         bool lastBarInTS = false;
-        bool readVolume = false;
-        qint32 idxRow, idxSymb;
+        qint32 idxRow, idxFile;
         qint64 iterTime = firstEntryTime;
         qint64 iterEnd = lastEntryTime;// - iterPeriod;
         // D O
@@ -249,39 +275,44 @@ void MainWindow::saveXYFiles()
             newRow.push_back( getDoubleTimeSymbol( "MONTH", iterTime ) );
             newRow.push_back( getDoubleTimeSymbol( "YEAR", iterTime ) );
             foreach( QString file, files ) {
-                idxSymb = iters[file] >= 0 ? iters[file] : 0;
-                newRow.push_back( (*readers[file]->getHistory())[idxSymb][1] );
-                newRow.push_back( (*readers[file]->getHistory())[idxSymb][2] );
-                newRow.push_back( (*readers[file]->getHistory())[idxSymb][3] );
-                newRow.push_back( (*readers[file]->getHistory())[idxSymb][4] );
-                if( readVolume )
-                    newRow.push_back( (*readers[file]->getHistory())[idxSymb][5] );
-                if( (*readers[file]->getHistory())[iters[file]][0] <= iterTime )
+                if( iters[file] < 0 && iterTime >= (*readers[file]->getHistory())[0][0] )
                     iters[file]++;
+                if( iters[file] >= 0 ) {
+                    idxFile = iters[file];
+                    newRow.push_back( (*readers[file]->getHistory())[idxFile][1] );
+                    newRow.push_back( (*readers[file]->getHistory())[idxFile][2] );
+                    newRow.push_back( (*readers[file]->getHistory())[idxFile][3] );
+                    newRow.push_back( (*readers[file]->getHistory())[idxFile][4] );
+                    if( readVolume )
+                        newRow.push_back( (*readers[file]->getHistory())[idxFile][5] );
+                    iters[file]++;
+                } else {
+                    for( qint32 idxTemp = 1; idxTemp <= 4; idxTemp++ )
+                        newRow.push_back( 0.0 );
+                    if( readVolume )
+                        newRow.push_back( 0.0 );
+                }
                 if( readers[file]->getHistorySize() == iters[file] )
                     lastBarInTS = true;
             }
-            fileX->getDataPtr()->append( newRow );
-            // N E W   L I N E   Y
-            std::vector<double> newRowY;
-            newRowY.push_back( getDoubleTimeSymbol( "HOUR", iterTime ) );
-            newRowY.push_back( getDoubleTimeSymbol( "MINUTE", iterTime ) );
-            newRowY.push_back( getDoubleTimeSymbol( "WEEKDAY", iterTime ) );
-            newRowY.push_back( getDoubleTimeSymbol( "DAY", iterTime ) );
-            newRowY.push_back( getDoubleTimeSymbol( "MONTH", iterTime ) );
-            newRowY.push_back( getDoubleTimeSymbol( "YEAR", iterTime ) );
-            foreach( QString file, files ) {
-                idxSymb = iters[file] >= 0 ? iters[file]+1 : 1;
-                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][1] );
-                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][2] );
-                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][3] );
-                newRowY.push_back( (*readers[file]->getHistory())[idxSymb][4] );
-                if( iters[file] > (readers[file]->getHistorySize() - 1) )
-                    lastBarInTS = true;
+            if( !lastBarInTS )
+                fileX->getDataPtr()->append( newRow );
+            if( idxRow > 0 ) { // skip first row
+                // N E W   L I N E   Y
+                std::vector<double> newRowY(newRow);
+                fileY->getDataPtr()->append( newRowY );
+                // N E W   L I N E   T O   Y - F I L E S
+                qint32 idxY = 6;
+                foreach( QString file, files ) {
+                    std::vector<double> newRowYY;
+                    for( qint32 idxYY = idxY; idxYY < idxY + 4; idxYY++ )
+                        newRowYY.push_back( newRowY[idxYY] );
+                    idxY += 4;
+                    if( readVolume )
+                        idxY += 1;
+                    writers[file]->getDataPtr()->append( newRowYY );
+                }
             }
-            fileY->getDataPtr()->append( newRowY );
-            // N E W   L I N E   T O   Y - F I L E S
-
             // E N D   I T E R
             idxRow += 1;
             if( lastBarInTS )
@@ -289,15 +320,15 @@ void MainWindow::saveXYFiles()
         }
 //  W R I T E   A L L   F I L E S
         fileX->writeFile();
-        ui->textBrowser->insertPlainText( tr("File input_data_x.csv saved.\n") );
+        print( tr("File input_data_x.csv saved.") );
         fileY->writeFile();
-        ui->textBrowser->insertPlainText( tr("File output_data_y.csv saved.\n") );
+        print( tr("File output_data_y.csv saved.\n") );
         foreach( QString file, files ) {
             writers[file]->writeFile();
-            ui->textBrowser->insertPlainText( tr("File %1_y.csv saved.\n").arg( file ) );
+            print( tr("File %1_y.csv saved.\n").arg( file ) );
         }
     } catch( qint32 e ) {
-        ui->textBrowser->insertPlainText( tr("Stop process. Error %1\n").arg(e) );
+        print( tr("Stop process. Error %1.").arg(e) );
     }
 //  F R E E   M E M O R Y
     foreach( QString file, files ) {
@@ -352,6 +383,19 @@ void MainWindow::setConnections(void)
              qApp, SLOT( aboutQt() ) );
 }
 
+bool MainWindow::checkFilePath(const QString fPath)
+{
+    if( fPath.contains(".hst") || fPath.contains(".csv") )
+        return true;
+    QDir path( fPath );
+    QStringList nameFilter;
+    nameFilter << "*.hst" << "*.csv";
+    QStringList files = path.entryList( nameFilter, QDir::Files );
+    if( files.size() > 0 )
+        return true;
+    return false;
+}
+
 void MainWindow::getMinPeriod(const QMap<QString, IMt4Reader *> &readers, qint32 &period)
 {
     period = 43200;
@@ -362,6 +406,7 @@ void MainWindow::getMinPeriod(const QMap<QString, IMt4Reader *> &readers, qint32
             period = i.value()->getHeader()->Period;
         }
     }
+    period *= 60;
 }
 
 void MainWindow::getEntryTime(const QMap<QString, IMt4Reader *> &readers,
