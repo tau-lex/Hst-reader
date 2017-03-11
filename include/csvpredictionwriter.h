@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
+/*                                                                           */
+/*   C S V P R E D I C T I O N W R I T E R   C L A S S   H E A D E R         */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #ifndef CSVPREDICTIONWRITER_H
 #define CSVPREDICTIONWRITER_H
 

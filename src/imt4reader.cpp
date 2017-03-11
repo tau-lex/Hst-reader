@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
+/*                                                                           */
+/*   I M T 4 R E A D E R   C L A S S                                         */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #include "include/imt4reader.h"
 #include <QDateTime>
 #include <QString>

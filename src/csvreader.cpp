@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
+/*                                                                           */
+/*   C S V R E A D E R   C L A S S                                           */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #include "include/csvreader.h"
 #include <QDateTime>
 #include <QString>

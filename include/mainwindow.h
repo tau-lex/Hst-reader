@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /*                                                                           */
 /*   HST-Reader                                                              */
-/*   https://www.mql5.com/ru/users/terentjew23                               */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
 /*                                                                           */
 /*   M A I N W I N D O W   C L A S S   H E A D E R                           */
 /*                                                                           */

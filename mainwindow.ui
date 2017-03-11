@@ -106,7 +106,14 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuData_Set">
+    <property name="title">
+     <string>Data Set</string>
+    </property>
+    <addaction name="actionPrepare_XY_Data"/>
+   </widget>
    <addaction name="menu_2"/>
+   <addaction name="menuData_Set"/>
    <addaction name="menu"/>
    <addaction name="menuAbout"/>
   </widget>
@@ -115,7 +122,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionOpenFolder"/>
@@ -137,8 +144,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionSave_Example"/>
    <addaction name="actionPrepare_XY_Data"/>
+   <addaction name="actionSave_Example"/>
   </widget>
   <action name="actionClearText">
    <property name="text">
@@ -153,7 +160,7 @@
     <string>Open File</string>
    </property>
    <property name="toolTip">
-    <string>Open history file</string>
+    <string>Open history file (hst or csv)</string>
    </property>
   </action>
   <action name="actionSaveCsv">
@@ -161,25 +168,31 @@
     <string>Save to .csv</string>
    </property>
    <property name="toolTip">
-    <string>Save in to csv file format</string>
+    <string>Save data to csv file</string>
    </property>
   </action>
   <action name="actionSave_Example">
    <property name="text">
-    <string>Forecast Example</string>
+    <string>Save a forecast example</string>
    </property>
    <property name="toolTip">
-    <string>Save example a prediction file</string>
+    <string>Save example a prediction file for MAS_Assistant MQL script</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="toolTip">
+    <string>Quit the program</string>
+   </property>
   </action>
   <action name="actionRead_File">
    <property name="text">
     <string>Read File</string>
+   </property>
+   <property name="toolTip">
+    <string>Read data from file</string>
    </property>
   </action>
   <action name="actionAbout_Qt">
@@ -202,10 +215,16 @@
    <property name="text">
     <string>Prepare XY Data</string>
    </property>
+   <property name="toolTip">
+    <string>Prepare X and Y files for mashine learning</string>
+   </property>
   </action>
   <action name="actionOpenFolder">
    <property name="text">
     <string>Open Folder</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the location of the history files</string>
    </property>
   </action>
  </widget>

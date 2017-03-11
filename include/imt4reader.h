@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
+/*                                                                           */
+/*   I M T 4 R E A D E R   C L A S S   H E A D E R                           */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #ifndef IMT4READER_H
 #define IMT4READER_H
 

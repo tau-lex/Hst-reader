@@ -16,7 +16,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET   = hst-reader
 TEMPLATE = app
-RC_FILE  = hst-reader.rc
+RC_FILE  = src/hst-reader.rc
 
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
@@ -26,14 +26,14 @@ SOURCES += src/main.cpp\
     src/csvwriter.cpp \
     src/csvpredictionwriter.cpp
 
-HEADERS  += include/mainwindow.h \
+HEADERS += include/mainwindow.h \
     include/imt4reader.h \
     include/hstreader.h \
     include/csvreader.h \
     include/csvwriter.h \
     include/csvpredictionwriter.h
 
-FORMS    += mainwindow.ui
+FORMS   += mainwindow.ui
 
 win32-g++{
     QMAKE_LFLAGS += -static-libgcc

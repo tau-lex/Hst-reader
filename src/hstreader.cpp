@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/*   HST-Reader                                                              */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
+/*                                                                           */
+/*   H S T R E A D E R   C L A S S                                           */
+/*                                                                           */
+/*   Aleksey Terentew                                                        */
+/*   terentew.aleksey@ya.ru                                                  */
+/*                                                                           */
+/*****************************************************************************/
+
 #include "include/hstreader.h"
 #include <QFile>
 #include <QString>

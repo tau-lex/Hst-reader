@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /*                                                                           */
 /*   HST-Reader                                                              */
-/*   https://www.mql5.com/ru/users/terentjew23                               */
+/*   https://github.com/terentjew-alexey/Hst-reader                          */
 /*                                                                           */
 /*   M A I N W I N D O W   C L A S S                                         */
 /*                                                                           */
@@ -54,7 +54,6 @@ void MainWindow::setFilePath(const QString fPath)
     QPalette pal = ui->filePathEdit->palette();
     if( checkFilePath(filePath) ) {
         pal.setColor( QPalette::Text, Qt::darkGreen );
-        print( filePath );
         if( filePath.contains(".hst") )
             historyReader = new HstReader( filePath );
         else if( filePath.contains(".csv") )
@@ -89,7 +88,6 @@ void MainWindow::on_findFileButton_clicked()
     QPalette pal = ui->filePathEdit->palette();
     if( checkFilePath(filePath) ) {
         pal.setColor( QPalette::Text, Qt::darkGreen );
-        print( filePath );
         if( filePath.contains(".hst") )
             historyReader = new HstReader( filePath );
         else if( filePath.contains(".csv") )
@@ -113,7 +111,6 @@ void MainWindow::on_findPathButton_clicked()
     QPalette pal = ui->filePathEdit->palette();
     if( checkFilePath(filePath) ) {
         pal.setColor( QPalette::Text, Qt::darkGreen );
-        print( filePath );
     } else {
         pal.setColor( QPalette::Text, Qt::darkRed );
     }
@@ -322,10 +319,10 @@ void MainWindow::saveXYFiles()
         fileX->writeFile();
         print( tr("File input_data_x.csv saved.") );
         fileY->writeFile();
-        print( tr("File output_data_y.csv saved.\n") );
+        print( tr("File output_data_y.csv saved.") );
         foreach( QString file, files ) {
             writers[file]->writeFile();
-            print( tr("File %1_y.csv saved.\n").arg( file ) );
+            print( tr("File %1_y.csv saved.").arg( file ) );
         }
     } catch( qint32 e ) {
         print( tr("Stop process. Error %1.").arg(e) );
@@ -353,12 +350,17 @@ void MainWindow::on_actionClearText_triggered()
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Hst-Reader"),
-             tr("The <b>Hst-Reader</b> converts .hst files in standard .сsv file.<br/>"
-                ".hst files - timeseries data storage, a series of programs Meta Trader. <br/><br/>"
-                "Version - %1.<br/>Author - %2.<br/><a href=\"%3\">%3</a>")
+             tr("The <b>Hst-Reader</b> converts HST files in standard CSV file.<br/><br/>"
+                "HST files - timeseries data storage, a series of programs Meta Trader.<br/>"
+                "Also the program can prepare data for the tasks of machine learning.<br/><br/>"
+                "Version: %1.<br/><br/>"
+                "%2.<br/>"
+                "<a href=\"%4\">%4</a><br/>"
+                "<a href=\"%3\">GitHub page.</a>")
                        .arg( qApp->applicationVersion() )
                        .arg( qApp->organizationName() )
-                       .arg( qApp->organizationDomain() ) );
+                       .arg( qApp->organizationDomain() )
+                       .arg( "terentjew.alexey@ya.ru" ));
 }
 
 void MainWindow::setConnections(void)
@@ -385,14 +387,20 @@ void MainWindow::setConnections(void)
 
 bool MainWindow::checkFilePath(const QString fPath)
 {
-    if( fPath.contains(".hst") || fPath.contains(".csv") )
+    if( fPath.contains(".hst") || fPath.contains(".csv") ) {
+        print( fPath );
         return true;
+    }
     QDir path( fPath );
     QStringList nameFilter;
     nameFilter << "*.hst" << "*.csv";
     QStringList files = path.entryList( nameFilter, QDir::Files );
-    if( files.size() > 0 )
+    if( files.size() > 0 ) {
+        print( tr("%1:").arg( fPath ) );
+        foreach( QString file, files )
+            print( file );
         return true;
+    }
     return false;
 }
 
