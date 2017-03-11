@@ -115,7 +115,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionOpenFolder"/>
@@ -123,12 +123,23 @@
    <addaction name="actionRead_File"/>
    <addaction name="separator"/>
    <addaction name="actionSaveCsv"/>
-   <addaction name="actionSave_Example"/>
-   <addaction name="actionPrepare_XY_Data"/>
    <addaction name="separator"/>
    <addaction name="actionClearText"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="dataToolBar">
+   <property name="windowTitle">
+    <string/>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSave_Example"/>
+   <addaction name="actionPrepare_XY_Data"/>
+  </widget>
   <action name="actionClearText">
    <property name="text">
     <string>Clear Text</string>
