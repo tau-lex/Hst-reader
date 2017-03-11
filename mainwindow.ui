@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Hst Reader</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>src/program.ico</normaloff>src/program.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>

@@ -353,10 +353,10 @@ void MainWindow::about()
              tr("The <b>Hst-Reader</b> converts HST files in standard CSV file.<br/><br/>"
                 "HST files - timeseries data storage, a series of programs Meta Trader.<br/>"
                 "Also the program can prepare data for the tasks of machine learning.<br/><br/>"
-                "Version: %1.<br/><br/>"
-                "%2.<br/>"
+                "Version: %1<br/><br/>"
+                "%2<br/>"
                 "<a href=\"%4\">%4</a><br/>"
-                "<a href=\"%3\">GitHub page.</a>")
+                "<a href=\"%3\">GitHub page</a>")
                        .arg( qApp->applicationVersion() )
                        .arg( qApp->organizationName() )
                        .arg( qApp->organizationDomain() )

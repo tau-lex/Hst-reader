@@ -1,5 +1,7 @@
 # Hst-reader
 
+Written in the Qt 5.7
+
 ### Eng
 
 Hst-Reader is a simple program that opens the HST files, reads their contents and saves the data in the CSV format. 
